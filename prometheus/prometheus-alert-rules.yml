@@ -1,0 +1,21 @@
+groups:
+- name: example
+  rules:
+
+  - alert: hello_world_service_down
+    expr: up{job="hello_world_app"} == 0
+    for: 10s
+    labels:
+      severity: critical
+    annotations:
+      summary: "Hello world service {{ $labels.instance }} is down"
+      description: "{{ $labels.instance }} has been down for more than 5 seconds."
+      
+  - alert: hello_world_service_overused
+    expr: rate(invocation_count_total{job="hello_world_app"}[1m]) > 1
+    for: 10s
+    labels:
+      severity: critical
+    annotations:
+      summary: "Hello world service {{ $labels.instance }} is overused"
+      description: "{{ $labels.instance }} invocation rate is > 1 / second."

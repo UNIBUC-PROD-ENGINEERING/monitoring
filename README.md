@@ -25,5 +25,19 @@
   * From the __+__ sign choose "Create -> Dashboard -> Add New Panel"
   * Select `Prometheus` as datasource for the panel, and paste `invocation_count_total{endpoint="hello"}`
 
+## Alerting manager configuration
+  * Configure Alert Manager notification channels in [prometheus-alert-manager.yml](labs/monitoring/prometheus/prometheus-alert-manager.yml)
+    * Config example given for Gmail.
+
+## Prometheus alerting rules and Alerting Manager
+* Check the Prometheus alerting rules in prometheus UI
+  * http://localhost:9090/alerts
+* Check the Prometheus alerting rules yaml
+  * [prometheus-alert-rules.yml](labs/monitoring/prometheus/prometheus-alert-rules.yml)
+* Stop the hello world application and notice how in http://localhost:9090/alerts the **hello_world_service_down** alert enters PENDING and then FIRING.
+* Navigate to Alert Manager UI to see firing alerts
+  * http://localhost:9093/#/alerts 
+  * Silence the firing **hello_world_service_down** alert for 1 hour
+  
 ## Stop monitoring layer
 `docker-compose down` 

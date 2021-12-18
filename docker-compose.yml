@@ -17,6 +17,19 @@ services:
     ports:
       - 9090:9090 
       
+  alertmanager:
+      image: prom/alertmanager:v0.12.0
+      ports:
+        - 9093:9093
+      volumes:
+        - ./prometheus/:/etc/prometheus/
+      restart: always
+      command:
+        - '-config.file=/etc/prometheus/prometheus-alert-manager.yml'
+        - '-storage.path=/prometheus'
+      deploy:
+        mode: global    
+  
   grafana:
     image: grafana/grafana:7.3.6
     ports:
