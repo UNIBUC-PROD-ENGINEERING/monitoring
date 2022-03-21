@@ -1,6 +1,31 @@
+# Prereqs
+Install loki logging driver docker plugin
+```
+docker plugin install grafana/loki-docker-driver:2.4.1 --alias loki --grant-all-permissions
+```
+
+# Monitoring Stack
+
 ## Start monitoring layer
 * Start all the containers
-  * `docker-compose up -d`
+```
+docker-compose up -d
+```
+
+![Monitoring high level diagram](./docs/high-level-monitoring-diagram.png "Monitoring high level diagram")
+
+App Metrics
+- prom metrics [http://localhost:8080/actuator/prometheus)](http://localhost:8080/actuator/prometheus)
+
+cAdvisor (container metrics exporter)
+- UI [http://localhost:8081/containers](http://localhost:8081/containers)
+- prom metrics [http://localhost:8081/metrics](http://localhost:8081/metrics)
+
+Prometheus
+- [http://localhost:9090/](http://localhost:9090/)
+
+Grafana
+- [http://localhost:3000/](http://localhost:3000/)
 
 ## Prometheus
 * Check which targets is Prometheus monitoring:
@@ -24,6 +49,12 @@
 * Create a dashboard to plot invocation_count_total:
   * From the __+__ sign choose "Create -> Dashboard -> Add New Panel"
   * Select `Prometheus` as datasource for the panel, and paste `invocation_count_total{endpoint="hello"}`
+
+# Start Perf test
+
+```
+docker-compose --profile perf up -d --remove-orphans --scale wrk-injector-info-perf=5
+```
 
 ## Stop monitoring layer
 `docker-compose down` 
