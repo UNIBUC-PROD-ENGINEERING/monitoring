@@ -7,9 +7,8 @@ docker plugin install grafana/loki-docker-driver:2.4.1 --alias loki --grant-all-
 # Monitoring Stack
 
 ## Start monitoring layer
-* Start all the containers
 ```
-docker-compose up -d
+./start.sh
 ```
 
 ![Monitoring high level diagram](./docs/high-level-monitoring-diagram.png "Monitoring high level diagram")
@@ -57,4 +56,6 @@ docker-compose --profile perf up -d --remove-orphans --scale wrk-injector-info-p
 ```
 
 ## Stop monitoring layer
-`docker-compose down` 
+```
+./stop.sh
+```
