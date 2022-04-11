@@ -1,8 +1,8 @@
 groups:
   - name: AppAlerts
     rules:
-      - alert: WARN-IncreaseInfoRetrievalRate
-        expr: rate(hello_info_count_total[5m]) > 10
+      - alert: WARNING-HighThroughput
+        expr: rate(hello_info_count_total[1m]) > 10
         for: 10s
         labels:
           severity: warning
@@ -10,8 +10,8 @@ groups:
           summary: Increased info retrieval rate {{ $labels.value}} {{ $value }}
           description: "A container has disappeared\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
-      - alert: CRIT-IncreaseInfoRetrievalRate
-        expr: rate(hello_info_count_total[5m]) > 50
+      - alert: CRITICAL-HighThroughput
+        expr: rate(hello_info_count_total[1m]) > 50
         for: 10s
         labels:
           severity: critical

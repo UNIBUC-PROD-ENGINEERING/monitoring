@@ -1,8 +1,8 @@
 groups:
   - name: CanaryAlerts
     rules:
-      - alert: WARN-NoInfoRetrieved
-        expr: rate(hello_info_count_total[5m]) == 0
+      - alert: WARNING-NoThroughout
+        expr: rate(hello_info_count_total[1m]) == 0
         for: 10s
         labels:
           severity: warning
