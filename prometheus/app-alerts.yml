@@ -18,3 +18,43 @@ groups:
         annotations:
           summary: Increased info retrieval rate {{ $labels.value}} {{ $value }}
           description: "A container has disappeared\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+      - alert: WARN-IncreasedResponseTimeProducts
+        expr: product_getall_time_seconds_sum / product_getall_time_seconds_count > 0.2
+        labels:
+          severity: warning
+        annotations:
+          summary: Requests for /products takes too long to respond
+          description: "Average time per /products response is greater than 200ms. System may be overloaded"
+
+      - alert: WARN-NoProductsRetrievedForProlongedPeriod
+        expr: product_count_number == 0
+        for: 30m
+        labels:
+          severity: warning
+        annotations:
+          summary: Number of retrieved products is zero when requesting /products
+          description: "For more than 30 minutes, the last retrieved product_count_number is zero"
+
+      - alert: WARN-UserAddedMoreThan1000ProductStock
+        expr: rate(product_add_stock_over_1000[10s]) > 1
+        labels:
+          severity: warning
+        annotations:
+          summary: A product stock was supplied with more than 1000 products
+
+      - alert: WARN-ProductGetManyRequests
+        expr: rate(product_get[10s]) > 30
+        labels:
+          severity: warning
+        annotations:
+          summary: Clients try to request data from /product at a very high rate. Possible DDoS attack.
+
+      - alert: CRIT-HighRateOfFailedRequests
+        expr: (product_counter_404_manual + product_counter_400_manual) / (product_counter_404_manual + product_counter_400_manual + product_getall_count_total + product_addstock_count_total + product_sellstock_count_total + product_get)
+        for: 10s
+        labels:
+          severity: critical
+        annotations:
+          summary: Increased info retrieval rate {{ $labels.value}} {{ $value }}
+          description: "A container has disappeared\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
