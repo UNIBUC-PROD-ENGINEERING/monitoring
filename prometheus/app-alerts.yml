@@ -2,13 +2,13 @@ groups:
   - name: AppAlerts
     rules:
       - alert: WARN-IncreaseInfoRetrievalRateProducts
-        expr: rate(product_getall_count_total[1s]) > 2
-        for: 1s
+        expr: rate(product_getall_count_total[50s]) > 0.2
+        for: 10s
         labels:
           severity: warning
         annotations:
-          summary: Increased traffic on endpoint /products {{ $labels.value}} {{ $value }}
-          description: "A container has disappeared\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+          summary: Increased traffic on endpoint /products
+          description: "There are many requests on this endpoint which may require us to split its functionality in more"
 
       - alert: CRIT-IncreaseInfoRetrievalRate
         expr: rate(hello_info_count_total[5m]) > 50
