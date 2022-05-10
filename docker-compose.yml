@@ -1,8 +1,10 @@
-version: '3.1'
+version: "3.1"
 services:
   cadvisor: # container metric prometheus exporter
     image: gcr.io/cadvisor/cadvisor:v0.39.0
     container_name: cadvisor
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
       - "8081:8080"
     volumes:
@@ -14,12 +16,16 @@ services:
       - /var/lib/dbus/machine-id:/var/lib/dbus/machine-id:ro
   mongodb-exporter:
     build: ./mongodb_exporter/
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     command: ./mongodb_exporter-linux-amd64 -logtostderr -mongodb.uri mongodb://root:example@host.docker.internal:27017 -groups.enabled 'asserts,durability,background_flusshing,connections,extra_info,global_lock,index_counters,network,op_counters,op_counters_repl,memory,locks,metrics'
     restart: always
     ports:
       - 9001:9001
   loki:
     image: grafana/loki:2.4.1
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
       - 3100:3100
     volumes:
@@ -27,6 +33,8 @@ services:
     command: -config.file=/etc/loki/config.yaml
   prometheus: # metrics aggregation and alert definition server (prometheus server)
     image: prom/prometheus:v2.33.4
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - ./prometheus/:/etc/prometheus/
     command:
@@ -40,6 +48,8 @@ services:
         loki-url: "http://host.docker.internal:3100/loki/api/v1/push"
   alertmanager: # alert manager (prometheus)
     image: prom/alertmanager:v0.23.0
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - ./alertmanager/:/config/
     command: --config.file=/config/alertmanager.yml --log.level=debug
@@ -51,6 +61,8 @@ services:
         loki-url: "http://host.docker.internal:3100/loki/api/v1/push"
   grafana: # dashboard visualisation tool (metrics & logs)
     image: grafana/grafana:8.4.3
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - ./grafana/provisioning:/etc/grafana/provisioning
       - ./grafana/dashboards:/etc/grafana/dashboards
@@ -62,7 +74,7 @@ services:
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
   wrk-injector-hello-functional: # traffic injector (low)
     image: mtchavez/docker-wrk
-    profiles: [ "perf" ]
+    profiles: ["perf"]
     command: wrk -t4 -c10 -d300s http://host.docker.internal:8080/hello-world
     logging:
       driver: loki
@@ -70,7 +82,7 @@ services:
         loki-url: "http://host.docker.internal:3100/loki/api/v1/push"
   wrk-injector-info-perf: # traffic injector (high)
     image: mtchavez/docker-wrk
-    profiles: [ "perf" ]
+    profiles: ["perf"]
     command: wrk -t4 -c1000 -d5m --timeout 1s --latency http://host.docker.internal:8080/info
     logging:
       driver: loki
